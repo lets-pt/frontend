@@ -25,7 +25,7 @@ const PracticeStart = () => {
 
   const handleStartRecording = () => {
     mediaRecorderRef.current = new MediaRecorder(mediaStreamRef.current, {
-      mimeType: "video/webm",
+      mimetype: "video/webm",
     });
 
     mediaRecorderRef.current.ondataavailable = function (event) {
@@ -37,7 +37,7 @@ const PracticeStart = () => {
 
     mediaRecorderRef.current.onstop = function () {
       if (recordedChunksRef.current.length > 0) {
-        const blob = new Blob(recordedChunksRef.current, { type: "video/webm;" });
+        const blob = new Blob(recordedChunksRef.current, { type: "video/webm" });
         const recordedMediaURL = URL.createObjectURL(blob);
         recordedVideoRef.current.src = recordedMediaURL;
       }
@@ -51,12 +51,13 @@ const PracticeStart = () => {
       mediaRecorderRef.current.stop();
       const formData = new FormData();
       const blob = new Blob(recordedChunksRef.current, { type: "video/webm;" });
+      const nowDate = new Date();
       formData.append(
         "video",
         blob,
-        `userID_${new Date().toLocaleString()}.webm`
+        `userID_${nowDate.getFullYear()}.${nowDate.getMonth()}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
       );
-      fetch("http://localhost:3000/s3/", {
+      fetch("http://localhost:3001/s3/", {
         method: "POST",
         body: formData,
       })
