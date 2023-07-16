@@ -1,0 +1,107 @@
+body{
+  padding: 20px;
+}
+
+textarea{
+  resize:none;
+}
+
+hr{
+  color:skyblue;
+  border:2px dotted;
+}
+
+.header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; 
+  align-items: center;
+  width:70%;
+}
+
+.app-logo{
+  cursor:pointer;
+}
+
+.join{
+  font-weight: bold;
+}
+
+.join-div{
+  display: flex;
+  align-items: center;
+}
+
+.join-title{
+  margin-top:10px;
+  margin-left: 1rem;
+  font-size:2em;
+  font-weight: bold;
+}
+
+.join-area{
+  display: flex;
+  border:2px solid #333;
+  padding:10px;
+  margin-left: 1rem;
+}
+
+.join-text{
+  border:none;
+  outline: none;
+  font-size:1.5em;
+}
+
+.practice-start{
+  font-weight: bold;
+  margin-left:30px;
+}
+
+.user-info{
+  cursor:pointer;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight:bold;
+  border:1px solid #333;
+  border-radius: 10px;
+  padding:5px;
+  transition: 0.5s;
+}
+
+.user-info:hover{
+  background-color: #999;
+  color:#fff;
+
+}
+
+.user-img{
+  font-size:2rem;
+  margin-right:0.2em;
+}
+
+.script-container{
+  width:70%;
+}
+
+.script-container h1{
+  font-weight: bold;
+  font-size:2em;
+}
+
+.script-area{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.script-text{
+  width:400px;
+  height:300px;
+  font-size: 1.2em;
+  padding : 10px;
+}
+
+.script-change{
+  font-weight: bold;
+}
