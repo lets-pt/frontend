@@ -2,6 +2,15 @@ body{
   padding: 20px;
 }
 
+textarea{
+  resize:none;
+}
+
+hr{
+  color:skyblue;
+  border:2px dotted;
+}
+
 .header{
   display: flex;
   flex-direction: row;
@@ -69,4 +78,30 @@ body{
 .user-img{
   font-size:2rem;
   margin-right:0.2em;
+}
+
+.script-container{
+  width:70%;
+}
+
+.script-container h1{
+  font-weight: bold;
+  font-size:2em;
+}
+
+.script-area{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.script-text{
+  width:400px;
+  height:300px;
+  font-size: 1.2em;
+  padding : 10px;
+}
+
+.script-change{
+  font-weight: bold;
 }
