@@ -3,8 +3,24 @@ import logo from '../img/logo.png';
 import { Form, Container, Button, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+    const navigate = useNavigate();
+    const goToPracticePage = () =>{
+        const width = 1200;
+    const height = 1000;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
+
+    window.open(
+      '/practice',
+      'Popup Window',
+      `width=${width}, height=${height}, left=${left}, top=${top}, resizable=no, scrollbars=yes`
+    );
+    }
+
     return (
         <Container className='header'>
             <img src={logo} className="app-logo" alt="logo" width={200} />
@@ -14,7 +30,7 @@ const Header = () => {
                     <input type='text' placeholder='참관코드를 입력해주세요' className='join-text'></input>
                     <Button variant='primary' className='join'>참관</Button>
                 </div>
-                <Button variant="primary" size="lg" className='practice-start'>발표 연습</Button>
+                <Button variant='primary' className='join' size='lg' onClick={goToPracticePage}>발표 연습</Button>
             </div>
             <div className='user-info'>
                 <FontAwesomeIcon icon={faUser} className='user-img'/>
