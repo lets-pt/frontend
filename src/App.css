@@ -1,0 +1,72 @@
+body{
+  padding: 20px;
+}
+
+.header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; 
+  align-items: center;
+  width:70%;
+}
+
+.app-logo{
+  cursor:pointer;
+}
+
+.join{
+  font-weight: bold;
+}
+
+.join-div{
+  display: flex;
+  align-items: center;
+}
+
+.join-title{
+  margin-top:10px;
+  margin-left: 1rem;
+  font-size:2em;
+  font-weight: bold;
+}
+
+.join-area{
+  display: flex;
+  border:2px solid #333;
+  padding:10px;
+  margin-left: 1rem;
+}
+
+.join-text{
+  border:none;
+  outline: none;
+  font-size:1.5em;
+}
+
+.practice-start{
+  font-weight: bold;
+  margin-left:30px;
+}
+
+.user-info{
+  cursor:pointer;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight:bold;
+  border:1px solid #333;
+  border-radius: 10px;
+  padding:5px;
+  transition: 0.5s;
+}
+
+.user-info:hover{
+  background-color: #999;
+  color:#fff;
+
+}
+
+.user-img{
+  font-size:2rem;
+  margin-right:0.2em;
+}
