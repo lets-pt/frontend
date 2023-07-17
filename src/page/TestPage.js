@@ -1,54 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Timer = () => {
-  const [timer, setTimer] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [userTime, setUserTime] = useState('');
-
-  const handleStart = () => {
-    if (userTime > 0) {
-      setTimer(userTime);
-      setIsRunning(true);
-    }
-  };
-
-  const handleStop = () => {
-    setIsRunning(false);
-  };
-
-  const handleReset = () => {
-    setIsRunning(false);
-    setTimer(0);
-    setUserTime('');
-  };
-
-  useEffect(() => {
-    let intervalId;
-
-    if (isRunning) {
-      intervalId = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
-    }
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [isRunning]);
-
+const MyComponent = () => {
   return (
     <div>
-      <input
-        type="number"
-        value={userTime}
-        onChange={(e) => setUserTime(parseInt(e.target.value))}
-      />
-      <button onClick={handleStart}>Start</button>
-      <button onClick={handleStop}>Stop</button>
-      <button onClick={handleReset}>Reset</button>
-      <p>Timer: {timer}</p>
+      <h1>홈 페이지</h1>
+      <Link to="/">
+        <button>다른 페이지로 이동</button>
+      </Link>
     </div>
   );
 };
 
-export default Timer;
+export default MyComponent;

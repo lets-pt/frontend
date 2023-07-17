@@ -209,3 +209,33 @@ hr{
   display: flex;
   justify-content: space-between;
 }
+
+/* 회원가입 페이지 */
+.join-container{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.join-id-area{
+  padding:5px;
+  width:200px;
+  margin-right:15px;
+}
+
+.nickname-area{
+  padding:5px;
+  width:200px;
+  margin-right:15px;
+}
+
+.nickname-container{
+  margin-bottom:10px;
+}
+
+.pwd-check-area{
+  margin-top:10px;
+  width:300px;
+  padding:5px;
+}
