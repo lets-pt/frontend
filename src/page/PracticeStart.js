@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Container, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaPlay, FaPause, FaStop } from 'react-icons/fa';
+import Modal from "react-modal";
+import logo from '../img/logo.png';
 
 const PracticeStart = () => {
     const videoOutputRef = useRef(null);
@@ -10,6 +12,20 @@ const PracticeStart = () => {
     const mediaRecorderRef = useRef(null);
     const recordedChunksRef = useRef([]);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+
+    const openModal = () => {
+        setModalIsOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalIsOpen(false);
+    };
+
+    const quitPractice = () => {
+        handleStopRecording();
+        openModal();
+    }
 
     useEffect(() => {
         // 유저의 카메라로 부터 입력을 사용할 수 있도록 요청
@@ -96,7 +112,7 @@ const PracticeStart = () => {
     };
 
     return (
-        <div>
+        <div className="practice-container">
             <div className="button-area">
                 <button onClick={handleStartRecording}>
                     <FaPlay /> 녹화시작
@@ -114,13 +130,25 @@ const PracticeStart = () => {
             </div>
             {isPlaying ? (
                 <div className="button-area">
-                    <Button onClick={handleStopRecording}>발표 종료</Button>
-                    <br/>
+                    <Button variant="danger" onClick={quitPractice}>발표 종료</Button>
+                    <br />
                     <Button onClick={handleDownload}>다운로드</Button>
                 </div>
             ) : (
                 <Button onClick={handleStartRecording}>발표 시작</Button>
             )}
+            <Modal isOpen={modalIsOpen} onRequestClose={closeModal}>
+                <div className="modal-center">
+                    <img src={logo} className="app-logo" alt="logo" width={200} />
+                    <h2>발표 연습 결과</h2>
+                    <video ref={recordedVideoRef} controls className="result-video"></video>
+                    <div>
+                        <Button>상세보기</Button>
+                        <Button onClick={handleDownload}>저장하기</Button>
+                    </div>
+                </div>
+                <button onClick={closeModal} className="modal-close">닫기</button>
+            </Modal>
         </div>
     );
 };
