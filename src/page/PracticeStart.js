@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaPlay, FaPause, FaStop } from 'react-icons/fa';
 import Modal from "react-modal";
 import logo from '../img/logo.png';
+import PdfUpload from "../component/PdfUpload";
 
 const PracticeStart = () => {
     const videoOutputRef = useRef(null);
@@ -13,6 +14,11 @@ const PracticeStart = () => {
     const recordedChunksRef = useRef([]);
     const [isPlaying, setIsPlaying] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [inputValue, setInputValue] = useState('');
+
+    const handleInputChange = (event) => {
+        setInputValue(event.target.value);
+    };
 
     const openModal = () => {
         setModalIsOpen(true);
@@ -122,25 +128,33 @@ const PracticeStart = () => {
                     <FaStop /> 정지
                 </button>
             </div>
-            <div className="camera-area">
-                <video ref={videoOutputRef}></video>
-
-                <video ref={recordedVideoRef} controls></video>
-
-            </div>
-            {isPlaying ? (
-                <div className="button-area">
-                    <Button variant="danger" onClick={quitPractice}>발표 종료</Button>
-                    <br />
-                    <Button onClick={handleDownload}>다운로드</Button>
+            <div className="camera-pdf-container">
+                <div className="practice-left">
+                    <PdfUpload />
                 </div>
-            ) : (
-                <Button onClick={handleStartRecording}>발표 시작</Button>
-            )}
+                <div className="practice-right">
+                    <video ref={videoOutputRef} className="live-camera"></video>
+                    {isPlaying ? (
+                        <p className="practice-title-save">{inputValue}</p>
+                    ) : (
+                        <input type="text" className="practice-title" placeholder="발표 제목을 입력해주세요" value={inputValue} onChange={handleInputChange}/>
+                    )}
+
+                    <br />
+                    {isPlaying ? (
+
+                        <Button variant="danger" onClick={quitPractice} className="start-stop-button">발표 종료</Button>
+
+                    ) : (
+                        <Button onClick={handleStartRecording} className="start-stop-button">발표 시작</Button>
+                    )}
+                </div>
+            </div>
+
             <Modal isOpen={modalIsOpen} onRequestClose={closeModal}>
                 <div className="modal-center">
                     <img src={logo} className="app-logo" alt="logo" width={200} />
-                    <h2>발표 연습 결과</h2>
+                    <h2>{inputValue}</h2>
                     <video ref={recordedVideoRef} controls className="result-video"></video>
                     <div>
                         <Button>상세보기</Button>

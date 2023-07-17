@@ -10,13 +10,13 @@ const Header = () => {
     const navigate = useNavigate();
     const goToPracticePage = () => {
         const width = 1200;
-        const height = 1000;
+        const height = 800;
         const left = window.screen.width / 2 - width / 2;
         const top = window.screen.height / 2 - height / 2;
 
         window.open(
             '/practice',
-            'Popup Window',
+            '_blank',
             `width=${width}, height=${height}, left=${left}, top=${top}, resizable=no, scrollbars=yes`
         );
     }
