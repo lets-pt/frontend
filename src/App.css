@@ -172,3 +172,40 @@ hr{
   margin-top:30px;
   width:400px;
 }
+
+/* 로그인 페이지 */
+.login-container{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-container input{
+  display: block;
+}
+
+.id-container{
+  margin-top:20px;
+  margin-bottom:10px;
+}
+
+.pwd-container{
+  margin-bottom:20px;
+}
+
+.id-area{
+  padding:5px;
+  width:300px;
+}
+
+.pwd-area{
+  padding:5px;
+  width:300px;
+}
+
+.login-button-container{
+  width:300px;
+  display: flex;
+  justify-content: space-between;
+}
