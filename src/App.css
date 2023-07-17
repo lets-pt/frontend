@@ -25,6 +25,7 @@ hr{
 
 .join{
   font-weight: bold;
+  margin-left: 20px;
 }
 
 .join-div{
@@ -105,3 +106,9 @@ hr{
 .script-change{
   font-weight: bold;
 }
+
+.card{
+  width:300px;
+  height:200px;
+}
+
