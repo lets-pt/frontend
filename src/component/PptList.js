@@ -13,7 +13,7 @@ const responsive = {
     desktop: {
         breakpoint: { max: 3000, min: 1024 },
         items: 3,
-        partialVisibilityGutter: -11
+        partialVisibilityGutter: -12
     },
     tablet: {
         breakpoint: { max: 1024, min: 464 },
@@ -31,6 +31,10 @@ const PptList = () => {
             <h1>다른 유저의 발표자료</h1>
             <Carousel responsive={responsive} partialVisible
         itemClass="carousel-item-padding-40-px">
+                <PptCard/>
+                <PptCard/>
+                <PptCard/>
+                <PptCard/>
                 <PptCard/>
                 <PptCard/>
                 <PptCard/>
