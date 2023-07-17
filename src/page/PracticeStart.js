@@ -36,7 +36,7 @@ const PracticeStart = () => {
     useEffect(() => {
         // 유저의 카메라로 부터 입력을 사용할 수 있도록 요청
         navigator.mediaDevices
-            .getUserMedia({ video: true })
+            .getUserMedia({ video: true, audio:true })
             .then(function (newMediaStream) {
                 mediaStreamRef.current = newMediaStream;
                 // 카메라의 입력을 실시간으로 비디오 태그에서 확인
@@ -133,7 +133,7 @@ const PracticeStart = () => {
                     <PdfUpload />
                 </div>
                 <div className="practice-right">
-                    <video ref={videoOutputRef} className="live-camera"></video>
+                    <video ref={videoOutputRef} className="live-camera" muted></video>
                     {isPlaying ? (
                         <p className="practice-title-save">{inputValue}</p>
                     ) : (
