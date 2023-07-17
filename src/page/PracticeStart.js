@@ -24,6 +24,7 @@ const PracticeStart = () => {
   }, []);
 
   const handleStartRecording = () => {
+    recordedChunksRef.current = []; //녹화 시작 전 데이터 저장할 배열 초기화
     mediaRecorderRef.current = new MediaRecorder(mediaStreamRef.current, {
       mimetype: "video/webm",
     });
@@ -32,44 +33,48 @@ const PracticeStart = () => {
       if (event.data && event.data.size > 0) {
         console.log("ondataavailable");
         recordedChunksRef.current.push(event.data);
+        console.log("recordedChuncksRdf: ", recordedChunksRef);
       }
     };
 
     mediaRecorderRef.current.onstop = function () {
       if (recordedChunksRef.current.length > 0) {
         const blob = new Blob(recordedChunksRef.current, { type: "video/webm" });
+        console.log("mediaRecorderRef.stop blob: ", blob);
         const recordedMediaURL = URL.createObjectURL(blob);
         recordedVideoRef.current.src = recordedMediaURL;
+
+        const formData = new FormData();
+        const nowDate = new Date();
+        formData.append(
+          'video',
+          blob,
+          `userID_${nowDate.getFullYear()}.${nowDate.getMonth()}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
+        );
+        console.log("Form-Data : ", formData);
+
+        fetch("http://localhost:3001/s3/", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => {
+            // 서버 응답 처리
+            console.log("영상 전송 완료");
+          })
+          .catch((error) => {
+            // 에러 처리
+            console.error("영상 전송 실패:", error);
+          });
+        mediaRecorderRef.current = null;
       }
     };
-
+    console.log("Recording Start!");
     mediaRecorderRef.current.start();
   };
 
   const handleStopRecording = () => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
-      const formData = new FormData();
-      const blob = new Blob(recordedChunksRef.current, { type: "video/webm;" });
-      const nowDate = new Date();
-      formData.append(
-        "video",
-        blob,
-        `userID_${nowDate.getFullYear()}.${nowDate.getMonth()}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
-      );
-      fetch("http://localhost:3001/s3/", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => {
-          // 서버 응답 처리
-          console.log("영상 전송 완료");
-        })
-        .catch((error) => {
-          // 에러 처리
-          console.error("영상 전송 실패:", error);
-        });
-      mediaRecorderRef.current = null;
     }
   };
   
