@@ -13,7 +13,7 @@ const Script = () => {
                     <Button variant='primary' size='lg' className='script-change'>변환하기</Button>
                 </div>
                 <div>
-                    <textarea className='script-text'></textarea>
+                    <textarea className='script-text' readOnly></textarea>
                 </div>
 
             </div>

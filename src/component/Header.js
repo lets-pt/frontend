@@ -8,17 +8,17 @@ import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
     const navigate = useNavigate();
-    const goToPracticePage = () =>{
+    const goToPracticePage = () => {
         const width = 1200;
-    const height = 1000;
-    const left = window.screen.width / 2 - width / 2;
-    const top = window.screen.height / 2 - height / 2;
+        const height = 1000;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
 
-    window.open(
-      '/practice',
-      'Popup Window',
-      `width=${width}, height=${height}, left=${left}, top=${top}, resizable=no, scrollbars=yes`
-    );
+        window.open(
+            '/practice',
+            'Popup Window',
+            `width=${width}, height=${height}, left=${left}, top=${top}, resizable=no, scrollbars=yes`
+        );
     }
 
     return (
@@ -33,7 +33,7 @@ const Header = () => {
                 <Button variant='primary' className='join' size='lg' onClick={goToPracticePage}>발표 연습</Button>
             </div>
             <div className='user-info'>
-                <FontAwesomeIcon icon={faUser} className='user-img'/>
+                <FontAwesomeIcon icon={faUser} className='user-img' />
                 내 정보
             </div>
         </Container>

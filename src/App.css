@@ -112,3 +112,16 @@ hr{
   height:200px;
 }
 
+.camera-area{
+  display: flex;
+  justify-content: space-between;
+}
+
+.camera-area > video{
+  width:500px;
+}
+
+.button-area{
+  display: flex;
+  margin-bottom:20px;
+}
