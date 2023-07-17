@@ -112,18 +112,42 @@ hr{
   height:200px;
 }
 
-.camera-area{
+.camera-pdf-container{
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; 
 }
 
-.camera-area > video{
-  width:500px;
-}
-
-.button-area{
-  display: flex;
+.practice-title{
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  font-size:1.2em;
+  width:15em;
   margin-bottom:20px;
+}
+
+.practice-title-save{
+  text-align: center;
+  font-weight: bold;
+  font-size:1.2em;
+  margin:0;
+  padding:0;
+  margin-bottom:20px;
+}
+
+.live-camera{
+  height:332.5px;
+  margin-bottom:20px;
+}
+
+.start-stop-button{
+  font-size:20px;
+  font-weight: bold;
+  width:150px;
+}
+
+.practice-right{
+  text-align: center;
 }
 
 .modal-center{
@@ -147,4 +171,41 @@ hr{
 .result-video{
   margin-top:30px;
   width:400px;
+}
+
+/* 로그인 페이지 */
+.login-container{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-container input{
+  display: block;
+}
+
+.id-container{
+  margin-top:20px;
+  margin-bottom:10px;
+}
+
+.pwd-container{
+  margin-bottom:20px;
+}
+
+.id-area{
+  padding:5px;
+  width:300px;
+}
+
+.pwd-area{
+  padding:5px;
+  width:300px;
+}
+
+.login-button-container{
+  width:300px;
+  display: flex;
+  justify-content: space-between;
 }

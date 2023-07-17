@@ -6,6 +6,8 @@ import Script from './component/Script';
 import Homepage from "./page/HomePage"
 import PracticeStart from "./page/PracticeStart"
 import { Routes, Route, Link } from 'react-router-dom';
+import TestPage from './page/TestPage';
+import LoginPage from './page/LoginPage';
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Homepage />}></Route>
         <Route path="/practice" element={<PracticeStart />}></Route>
+        <Route path="/test" element={<TestPage />}></Route>
+        <Route path="/login" element={<LoginPage />}></Route>
       </Routes>
     </div>
   );

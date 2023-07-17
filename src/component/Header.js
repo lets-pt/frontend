@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import logo from '../img/logo.png';
 import { Form, Container, Button, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,15 +8,39 @@ import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
     const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const handleLogin = () => {
+        goToLoginPage();
+        setIsLoggedIn(true);
+    };
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+    };
+
+    const goToLoginPage = () => {
+        const width = 400;
+        const height = 300;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        window.open(
+            '/login',
+            '_blank',
+            `width=${width}, height=${height}, left=${left}, top=${top}, resizable=no, scrollbars=yes`
+        );
+    }
+
     const goToPracticePage = () => {
         const width = 1200;
-        const height = 1000;
+        const height = 800;
         const left = window.screen.width / 2 - width / 2;
         const top = window.screen.height / 2 - height / 2;
 
         window.open(
             '/practice',
-            'Popup Window',
+            '_blank',
             `width=${width}, height=${height}, left=${left}, top=${top}, resizable=no, scrollbars=yes`
         );
     }
@@ -32,10 +56,18 @@ const Header = () => {
                 </div>
                 <Button variant='primary' className='join' size='lg' onClick={goToPracticePage}>발표 연습</Button>
             </div>
-            <div className='user-info'>
-                <FontAwesomeIcon icon={faUser} className='user-img' />
-                내 정보
-            </div>
+            {isLoggedIn ? (
+                <div className='user-info' onClick={handleLogout}>
+                    <FontAwesomeIcon icon={faUser} className='user-img' />
+                    내 정보
+                </div>
+            ) : (
+                <div className='user-info' onClick={handleLogin}>
+                    <FontAwesomeIcon icon={faUser} className='user-img' />
+                    로그인
+                </div>
+            )}
+
         </Container>
 
     )
