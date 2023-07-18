@@ -15,6 +15,7 @@ const PracticeStart = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
+    const [quitFlag, setQuitflag] = useState(false); //녹화 종료 버튼 클릭 여부 확인
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
@@ -29,6 +30,7 @@ const PracticeStart = () => {
     };
 
     const quitPractice = () => {
+        setQuitflag(true);
         handleStopRecording();
         openModal();
     }
@@ -68,28 +70,30 @@ const PracticeStart = () => {
                 const recordedMediaURL = URL.createObjectURL(blob);
                 recordedVideoRef.current.src = recordedMediaURL;
 
-                const formData = new FormData();
-                const nowDate = new Date();
-                formData.append(
-                    'video',
-                    blob,
-                    `userID_${nowDate.getFullYear()}.${nowDate.getMonth()}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
-                );
-                console.log("Form-Data : ", formData);
+                console.log(quitFlag);
+                if(quitFlag === true) { //녹화 종료 버튼이 눌렸을 때만 서버에 데이터 전송
+                    const formData = new FormData();
+                    const nowDate = new Date();
+                    formData.append(
+                        'video',
+                        blob,
+                        `userID_${nowDate.getFullYear()}.${nowDate.getMonth()}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
+                    );
+                    console.log("Post Form-Data : ", formData);
 
-                fetch("http://localhost:3001/s3/", {
-                    method: "POST",
-                    body: formData,
-                })
-                    .then((response) => {
-                        // 서버 응답 처리
-                        console.log("영상 전송 완료");
+                    fetch("http://localhost:3001/s3/", {
+                        method: "POST",
+                        body: formData,
                     })
-                    .catch((error) => {
-                        // 에러 처리
-                        console.error("영상 전송 실패:", error);
-                    });
+                        .then((response) => {
+                            console.log("영상 전송 완료", response); // 서버 응답 처리
+                        })
+                        .catch((error) => {                            
+                            console.error("영상 전송 실패:", error); // 서버 응답 처리
+                        });
+                }
                 mediaRecorderRef.current = null;
+                console.log(mediaRecorderRef.current);
             }
         };
         console.log("Recording Start!");
@@ -103,7 +107,6 @@ const PracticeStart = () => {
             setIsPlaying(false);
         }
     };
-
 
     const handleDownload = () => {
         if (recordedChunksRef.current.length > 0) {
