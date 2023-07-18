@@ -15,7 +15,7 @@ const PracticeStart = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
-    const [quitFlag, setQuitflag] = useState(false); //녹화 종료 버튼 클릭 여부 확인
+    const quitFlag = useRef(null); //녹화 종료 버튼 클릭 여부 확인
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
@@ -30,7 +30,7 @@ const PracticeStart = () => {
     };
 
     const quitPractice = () => {
-        setQuitflag(true);
+        quitFlag.current = true;
         handleStopRecording();
         openModal();
     }
@@ -51,6 +51,7 @@ const PracticeStart = () => {
 
     const handleStartRecording = () => {
         recordedChunksRef.current = []; //녹화 시작 전 데이터 저장할 배열 초기화
+        quitFlag.current = false;
         mediaRecorderRef.current = new MediaRecorder(mediaStreamRef.current, {
             mimetype: "video/webm",
         });
@@ -71,13 +72,13 @@ const PracticeStart = () => {
                 recordedVideoRef.current.src = recordedMediaURL;
 
                 console.log(quitFlag);
-                if(quitFlag === true) { //녹화 종료 버튼이 눌렸을 때만 서버에 데이터 전송
+                if(quitFlag.current === true) { //녹화 종료 버튼이 눌렸을 때만 서버에 데이터 전송
                     const formData = new FormData();
                     const nowDate = new Date();
                     formData.append(
                         'video',
                         blob,
-                        `userID_${nowDate.getFullYear()}.${nowDate.getMonth()}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
+                        `userID_${nowDate.getFullYear()}.${nowDate.getMonth()+1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
                     );
                     console.log("Post Form-Data : ", formData);
 
