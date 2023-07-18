@@ -69,7 +69,9 @@ const PracticeStart = () => {
                 const blob = new Blob(recordedChunksRef.current, { type: "video/webm" });
                 console.log("mediaRecorderRef.stop blob: ", blob);
                 const recordedMediaURL = URL.createObjectURL(blob);
-                recordedVideoRef.current.src = recordedMediaURL;
+                if (recordedVideoRef.current) { //아무 값도 없을 때 참조 금지
+                    recordedVideoRef.current.src = recordedMediaURL;
+                }
 
                 console.log(quitFlag);
                 if(quitFlag.current === true) { //녹화 종료 버튼이 눌렸을 때만 서버에 데이터 전송
