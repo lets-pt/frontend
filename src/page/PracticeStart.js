@@ -10,6 +10,7 @@ const PracticeStart = () => {
     const videoOutputRef = useRef(null);
     const recordedVideoRef = useRef(null);
     const mediaStreamRef = useRef(null);
+    const cam_mediaStreamRef = useRef(null);
     const mediaRecorderRef = useRef(null);
     const recordedChunksRef = useRef([]);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -36,13 +37,21 @@ const PracticeStart = () => {
     }
 
     useEffect(() => {
+
+        // 유저의 화면 공유 요청
+        navigator.mediaDevices
+            .getDisplayMedia({viedo:true})
+            .then(function(newMediaStream){
+                mediaStreamRef.current = newMediaStream;
+            })
+
         // 유저의 카메라로 부터 입력을 사용할 수 있도록 요청
         navigator.mediaDevices
             .getUserMedia({ video: true, audio:true })
             .then(function (newMediaStream) {
-                mediaStreamRef.current = newMediaStream;
+                cam_mediaStreamRef.current = newMediaStream;
                 // 카메라의 입력을 실시간으로 비디오 태그에서 확인
-                videoOutputRef.current.srcObject = mediaStreamRef.current;
+                videoOutputRef.current.srcObject = cam_mediaStreamRef.current;
                 videoOutputRef.current.onloadedmetadata = function (e) {
                     videoOutputRef.current.play();
                 };
