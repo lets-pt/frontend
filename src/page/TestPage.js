@@ -1,52 +1,57 @@
 import React, { useState, useEffect } from 'react';
 
 const Timer = () => {
-  const [timer, setTimer] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [userTime, setUserTime] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
-  const handleStart = () => {
-    if (userTime > 0) {
-      setTimer(userTime);
-      setIsRunning(true);
-    }
+  const handleTimeChange = (event) => {
+    setSelectedTime(event.target.value);
   };
 
-  const handleStop = () => {
-    setIsRunning(false);
-  };
-
-  const handleReset = () => {
-    setIsRunning(false);
-    setTimer(0);
-    setUserTime('');
+  const handleStartTimer = () => {
+    const minutes = parseInt(selectedTime);
+    setRemainingTime(minutes * 60);
+    setIsTimerRunning(true);
   };
 
   useEffect(() => {
-    let intervalId;
+    let timerInterval;
 
-    if (isRunning) {
-      intervalId = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
+    if (isTimerRunning) {
+      timerInterval = setInterval(() => {
+        setRemainingTime((prevTime) => prevTime - 1);
       }, 1000);
     }
 
     return () => {
-      clearInterval(intervalId);
+      clearInterval(timerInterval);
     };
-  }, [isRunning]);
+  }, [isTimerRunning]);
+
+  useEffect(() => {
+    if (remainingTime === 0) {
+      setIsTimerRunning(false);
+    }
+  }, [remainingTime]);
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div>
       <input
         type="number"
-        value={userTime}
-        onChange={(e) => setUserTime(parseInt(e.target.value))}
+        min="1"
+        placeholder="Enter minutes"
+        value={selectedTime}
+        onChange={handleTimeChange}
       />
-      <button onClick={handleStart}>Start</button>
-      <button onClick={handleStop}>Stop</button>
-      <button onClick={handleReset}>Reset</button>
-      <p>Timer: {timer}</p>
+      <button onClick={handleStartTimer}>Start Timer</button>
+      {isTimerRunning && <p>Remaining Time: {formatTime(remainingTime)}</p>}
     </div>
   );
 };

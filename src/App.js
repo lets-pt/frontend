@@ -8,6 +8,7 @@ import PracticeStart from "./page/PracticeStart"
 import { Routes, Route, Link } from 'react-router-dom';
 import TestPage from './page/TestPage';
 import LoginPage from './page/LoginPage';
+import JoinPage from './page/JoinPage';
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
         <Route path="/practice" element={<PracticeStart />}></Route>
         <Route path="/test" element={<TestPage />}></Route>
         <Route path="/login" element={<LoginPage />}></Route>
+        <Route path="/join" element={<JoinPage />}></Route>
+
       </Routes>
     </div>
   );
