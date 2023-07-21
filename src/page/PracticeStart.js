@@ -13,7 +13,6 @@ const PracticeStart = () => {
     const screenMediaStreamRef = useRef(null);
     const camMediaStreamRef = useRef(null);
     const screenMediaRecorderRef = useRef(null);
-    const screenMediaRecorderRefPreview = useRef(null);
     const camMediaRecorderRef = useRef(null);
     const screenRecordedChunksRef = useRef([]);
     const camRecordedChunksRef = useRef([]);
@@ -101,49 +100,35 @@ const PracticeStart = () => {
                 if (screenRecordedVideoRef.current && camRecordedVideoRef.current) { //아무 값도 없을 때 참조 금지
                     screenRecordedVideoRef.current.src = screenRecordedMediaURL;
                     camRecordedVideoRef.current.src = camRecordedMediaURL;
-                    screenMediaRecorderRefPreview.current.src = screenRecordedMediaURL; 
                 }
 
                 console.log(quitFlag);
                 if(quitFlag.current === true) { //녹화 종료 버튼이 눌렸을 때만 서버에 데이터 전송
-                    const screenFormData = new FormData();
-                    const camFormData = new FormData();
+                    const formData = new FormData();
                     const nowDate = new Date();
-                    screenFormData.append(
+                    formData.append( //화면 녹화 추가
                         'screen',
                         screenBlob,
                         `screen_userID_${nowDate.getFullYear()}.${nowDate.getMonth()+1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
                     );
-                    console.log("Post Form-Data : ", screenFormData);
 
-                    camFormData.append(
+                    formData.append( //웹캠 녹화 추가
                         'cam',
                         camBlob,
                         `cam_userID_${nowDate.getFullYear()}.${nowDate.getMonth() + 1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
                     );
+                    console.log(formData);
                     
-                    //화면 녹화 영상 서버 전송
-                    fetch("http://localhost:3001/s3/", {
+                    //영상 서버 전송
+                    fetch("http://localhost:3001/ffmpeg/", {
                         method: "POST",
-                        body: screenFormData,
+                        body: formData,
                     })
                         .then((response) => {
-                            console.log("screen 전송 완료", response); // 서버 응답 처리
+                            console.log("영상 전송 완료", response); // 서버 응답 처리
                         })
                         .catch((error) => {                            
-                            console.error("screen 전송 실패:", error); // 서버 응답 처리
-                        });
-                    
-                    //웹캠 녹화 영상 서버 전송
-                    fetch("http://localhost:3001/s3/", {
-                        method: "POST",
-                        body: camFormData,
-                    })
-                        .then((response) => {
-                            console.log("cam 전송 완료", response); // 서버 응답 처리
-                        })
-                        .catch((error) => {                            
-                            console.error("cam 전송 실패:", error); // 서버 응답 처리
+                            console.error("영상 전송 실패:", error); // 서버 응답 처리
                         });
                 }
                 screenMediaRecorderRef.current = null;
@@ -218,7 +203,7 @@ const PracticeStart = () => {
                 <div className="modal-center">
                     <img src={logo} className="app-logo" alt="logo" width={200} />
                     <h2>{inputValue}</h2>
-                    <video ref={screenMediaRecorderRefPreview} controls className="result-video"></video>
+                    <video ref={camMediaRecorderRef} controls className="result-video"></video>
                     <div>
                         <Button>상세보기</Button>
                         <Button onClick={handleDownload}>저장하기</Button>
