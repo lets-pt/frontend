@@ -13,6 +13,7 @@ const PracticeStart = () => {
     const screenMediaStreamRef = useRef(null);
     const camMediaStreamRef = useRef(null);
     const screenMediaRecorderRef = useRef(null);
+    const screenMediaRecorderRefPreview = useRef(null);
     const camMediaRecorderRef = useRef(null);
     const screenRecordedChunksRef = useRef([]);
     const camRecordedChunksRef = useRef([]);
@@ -96,10 +97,11 @@ const PracticeStart = () => {
                 const camBlob = new Blob(camRecordedChunksRef.current, { type: "video/webm" });
                 console.log("camRecordedChunksRef.stop blob: ", camBlob);
                 const screenRecordedMediaURL = URL.createObjectURL(screenBlob);
-                const camRecordedMediaURL = URL.createObjectURL(screenBlob);
+                const camRecordedMediaURL = URL.createObjectURL(camBlob);
                 if (screenRecordedVideoRef.current && camRecordedVideoRef.current) { //아무 값도 없을 때 참조 금지
                     screenRecordedVideoRef.current.src = screenRecordedMediaURL;
                     camRecordedVideoRef.current.src = camRecordedMediaURL;
+                    screenMediaRecorderRefPreview.current.src = screenRecordedMediaURL; 
                 }
 
                 console.log(quitFlag);
@@ -108,14 +110,14 @@ const PracticeStart = () => {
                     const camFormData = new FormData();
                     const nowDate = new Date();
                     screenFormData.append(
-                        'video',
+                        'screen',
                         screenBlob,
                         `screen_userID_${nowDate.getFullYear()}.${nowDate.getMonth()+1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
                     );
                     console.log("Post Form-Data : ", screenFormData);
 
                     camFormData.append(
-                        'video',
+                        'cam',
                         camBlob,
                         `cam_userID_${nowDate.getFullYear()}.${nowDate.getMonth() + 1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
                     );
@@ -216,7 +218,7 @@ const PracticeStart = () => {
                 <div className="modal-center">
                     <img src={logo} className="app-logo" alt="logo" width={200} />
                     <h2>{inputValue}</h2>
-                    <video ref={camRecordedVideoRef} controls className="result-video"></video>
+                    <video ref={screenMediaRecorderRefPreview} controls className="result-video"></video>
                     <div>
                         <Button>상세보기</Button>
                         <Button onClick={handleDownload}>저장하기</Button>
