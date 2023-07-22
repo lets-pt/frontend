@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-
 const Timer = () => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
@@ -13,9 +12,6 @@ const Timer = () => {
     setSeconds(0);
   };
 
-  const handlePause = () => {
-    setIsRunning(false);
-  };
 
   const handleReset = () => {
     setIsRunning(false);
@@ -59,9 +55,6 @@ const Timer = () => {
       <div>
         {!isRunning && (
           <button onClick={handleStart}>시작</button>
-        )}
-        {isRunning && (
-          <button onClick={handlePause}>일시정지</button>
         )}
         <button onClick={handleReset}>리셋</button>
       </div>

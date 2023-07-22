@@ -5,6 +5,9 @@ import { FaPlay, FaPause, FaStop } from 'react-icons/fa';
 import Modal from "react-modal";
 import logo from '../img/logo.png';
 import PdfUpload from "../component/PdfUpload";
+import KeywordPage from "./KeywordPage";
+import Timer from "../component/Timer";
+
 
 const PracticeStart = () => {
     const videoOutputRef = useRef(null);
@@ -20,6 +23,35 @@ const PracticeStart = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const quitFlag = useRef(null); //녹화 종료 버튼 클릭 여부 확인
+
+    const goToDetailPage = () => {
+        const width = 1000;
+        const height = 600;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        window.open(
+            '/resultDetail',
+            '_blank',
+            `width=${width}, height=${height}, left=${left}, top=${top}, resizable=no, scrollbars=yes`
+        );
+    }
+
+
+    const goToKeywordPage = () => {
+        const width = 400;
+        const height = 300;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        window.open(
+            '/keyword',
+            '_blank',
+            `width=${width}, height=${height}, left=${left}, top=${top}, resizable=no, scrollbars=yes`
+        );
+    }
+
+
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
@@ -50,7 +82,7 @@ const PracticeStart = () => {
 
         // 유저의 카메라로 부터 입력을 사용할 수 있도록 요청
         navigator.mediaDevices
-            .getUserMedia({ video: true, audio:true })
+            .getUserMedia({ video: true, audio: true })
             .then(function (newMediaStream) {
                 camMediaStreamRef.current = newMediaStream;
                 // 카메라의 입력을 실시간으로 비디오 태그에서 확인
@@ -103,13 +135,15 @@ const PracticeStart = () => {
                 }
 
                 console.log(quitFlag);
-                if(quitFlag.current === true) { //녹화 종료 버튼이 눌렸을 때만 서버에 데이터 전송
+                if (quitFlag.current === true) { //녹화 종료 버튼이 눌렸을 때만 서버에 데이터 전송
                     const formData = new FormData();
                     const nowDate = new Date();
+
                     formData.append( //화면 녹화 추가
                         'screen',
                         screenBlob,
                         `screen_userID_${nowDate.getFullYear()}.${nowDate.getMonth()+1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
+
                     );
 
                     formData.append( //웹캠 녹화 추가
@@ -127,7 +161,7 @@ const PracticeStart = () => {
                         .then((response) => {
                             console.log("영상 전송 완료", response); // 서버 응답 처리
                         })
-                        .catch((error) => {                            
+                        .catch((error) => {
                             console.error("영상 전송 실패:", error); // 서버 응답 처리
                         });
                 }
@@ -167,25 +201,33 @@ const PracticeStart = () => {
 
     return (
         <div className="practice-container">
-            <div className="button-area">
-                <button onClick={handleStartRecording}>
-                    <FaPlay /> 녹화시작
-                </button>
-
+            <div className="practice-top">
+                <div>
+                    <Timer />
+                </div>
                 <button onClick={handleStopRecording}>
                     <FaStop /> 정지
                 </button>
+                <p>
+                    연습모드
+                </p>
+                <p>
+                    실전모드
+                </p>
+                <button onClick={goToKeywordPage}>키워드 등록</button>
+
             </div>
             <div className="camera-pdf-container">
                 <div className="practice-left">
                     <PdfUpload />
+                    <textarea className="script-input" placeholder="스크립트 작성"></textarea>
                 </div>
                 <div className="practice-right">
                     <video ref={videoOutputRef} className="live-camera" muted></video>
                     {isPlaying ? (
                         <p className="practice-title-save">{inputValue}</p>
                     ) : (
-                        <input type="text" className="practice-title" placeholder="발표 제목을 입력해주세요" value={inputValue} onChange={handleInputChange}/>
+                        <input type="text" className="practice-title" placeholder="발표 제목을 입력해주세요" value={inputValue} onChange={handleInputChange} />
                     )}
 
                     <br />
@@ -205,7 +247,7 @@ const PracticeStart = () => {
                     <h2>{inputValue}</h2>
                     <video ref={camMediaRecorderRef} controls className="result-video"></video>
                     <div>
-                        <Button>상세보기</Button>
+                        <Button onClick={goToDetailPage}>상세보기</Button>
                         <Button onClick={handleDownload}>저장하기</Button>
                     </div>
                 </div>
