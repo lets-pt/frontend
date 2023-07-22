@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
+import { ClipLoader } from "react-spinners";
 
 const Script = () => {
   const [textareaValue, setTextareaValue] = useState("");
   const [convertedScript, setConvertedScript] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleTextareaChange = (event) => {
     setTextareaValue(event.target.value);
@@ -18,6 +20,7 @@ const Script = () => {
     };
 
     try {
+      setLoading(true)
       const response = await fetch("http://localhost:3001/chat-gpt-ai/message",
         {
           method: "POST",
@@ -30,11 +33,13 @@ const Script = () => {
 
       if (!response.ok) {
         throw new Error("fail");
+        setLoading(false);
       }
 
       const result = await response.text();
       console.log("서버 응답: ", result);
       setConvertedScript(result);
+      setLoading(false);
     } catch (error) {
       console.error("스크립트 전송 실패:", error);
     }
@@ -63,11 +68,21 @@ const Script = () => {
           </Button>
         </div>
         <div>
-          <textarea
-            value={convertedScript}
-            className="script-text"
-            readOnly
-          ></textarea>
+
+          {loading ? (
+            <div className="script-text">
+
+              <ClipLoader loading={loading} color="#f88c68" size={150}></ClipLoader>
+            </div>
+          ) : (
+            <textarea
+              value={convertedScript}
+              className="script-text"
+              readOnly
+            ></textarea>
+          )}
+
+
         </div>
       </div>
     </Container>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import logo from '../img/logo.png';
 import { Form, Container, Button, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,6 +45,19 @@ const Header = () => {
         );
     }
 
+    const goToObservePage = () => {
+        const width = 1200;
+        const height = 800;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        window.open(
+            '/Observe',
+            '_blank',
+            `width=${width}, height=${height}, left=${left}, top=${top}, resizable=no, scrollbars=yes`
+        );
+    }
+
     return (
         <Container className='header'>
             <img src={logo} className="app-logo" alt="logo" width={200} />
@@ -52,7 +65,7 @@ const Header = () => {
                 <p className='join-title'>참관코드</p>
                 <div className='join-area'>
                     <input type='text' placeholder='참관코드를 입력해주세요' className='join-text'></input>
-                    <Button variant='primary' className='join'>참관</Button>
+                    <Button variant='primary' className='join' onClick={goToObservePage}>참관</Button>
                 </div>
                 <Button variant='primary' className='join' size='lg' onClick={goToPracticePage}>발표 연습</Button>
             </div>
