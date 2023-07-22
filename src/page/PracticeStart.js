@@ -7,22 +7,14 @@ import logo from '../img/logo.png';
 import PdfUpload from "../component/PdfUpload";
 import KeywordPage from "./KeywordPage";
 import Timer from "../component/Timer";
-
+import useVideoState from "../hooks/useVideoState";
+import useTimerState from '../hooks/useTimerState';
 
 const PracticeStart = () => {
-    const videoOutputRef = useRef(null);
-    const screenRecordedVideoRef = useRef(null);
-    const camRecordedVideoRef = useRef(null);
-    const screenMediaStreamRef = useRef(null);
-    const camMediaStreamRef = useRef(null);
-    const screenMediaRecorderRef = useRef(null);
-    const camMediaRecorderRef = useRef(null);
-    const screenRecordedChunksRef = useRef([]);
-    const camRecordedChunksRef = useRef([]);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const { startRecording, stopRecording, downloadVideo, quitFlag, screenMediaStreamRef, camMediaStreamRef, videoOutputRef, camMediaRecorderRef, playing, formData } = useVideoState();
+    const { startTimer, stopTimer, minutes, seconds } = useTimerState();
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
-    const quitFlag = useRef(null); //녹화 종료 버튼 클릭 여부 확인
 
     const goToDetailPage = () => {
         const width = 1000;
@@ -65,9 +57,20 @@ const PracticeStart = () => {
         setModalIsOpen(false);
     };
 
+    const startPractice = () => {
+        startRecording();
+        startTimer();
+    }
+
+    const stopPractice = () => {
+        stopRecording();
+        stopTimer();
+    }
+
     const quitPractice = () => {
         quitFlag.current = true;
-        handleStopRecording();
+        stopRecording();
+        stopTimer();
         openModal();
     }
 
@@ -75,8 +78,8 @@ const PracticeStart = () => {
     useEffect(() => {
         // 유저의 화면 공유 요청
         navigator.mediaDevices
-            .getDisplayMedia({video:true})
-            .then(function(newMediaStream){
+            .getDisplayMedia({ video: true })
+            .then(function (newMediaStream) {
                 screenMediaStreamRef.current = newMediaStream;
             })
 
@@ -93,119 +96,13 @@ const PracticeStart = () => {
             });
     }, []);
 
-    const handleStartRecording = () => {
-        //녹화 시작 전 데이터 저장할 배열 초기화
-        screenRecordedChunksRef.current = [];
-        camRecordedChunksRef.current = [];
-        quitFlag.current = false;
-
-        screenMediaRecorderRef.current = new MediaRecorder(screenMediaStreamRef.current, {
-            mimetype: "video/webm",
-        });
-        camMediaRecorderRef.current = new MediaRecorder(camMediaStreamRef.current, {
-            mimetype: "video/webm",
-        });
-
-        screenMediaRecorderRef.current.ondataavailable = function (event) {
-            if (event.data && event.data.size > 0) {
-                console.log("ondataavailable");
-                screenRecordedChunksRef.current.push(event.data);
-                console.log("screenMediaRecorderRef: ", screenRecordedChunksRef);
-            }
-        };
-        camMediaRecorderRef.current.ondataavailable = function (event) {
-            if (event.data && event.data.size > 0) {
-                console.log("ondataavailable");
-                camRecordedChunksRef.current.push(event.data);
-                console.log("camMediaRecorderRef: ", camRecordedChunksRef);
-            }
-        };
-
-        screenMediaRecorderRef.current.onstop = function () {
-            if (screenRecordedChunksRef.current.length > 0) {
-                const screenBlob = new Blob(screenRecordedChunksRef.current, { type: "video/webm" });
-                console.log("screenMediaRecorderRef.stop blob: ", screenBlob);
-                const camBlob = new Blob(camRecordedChunksRef.current, { type: "video/webm" });
-                console.log("camRecordedChunksRef.stop blob: ", camBlob);
-                const screenRecordedMediaURL = URL.createObjectURL(screenBlob);
-                const camRecordedMediaURL = URL.createObjectURL(camBlob);
-                if (screenRecordedVideoRef.current && camRecordedVideoRef.current) { //아무 값도 없을 때 참조 금지
-                    screenRecordedVideoRef.current.src = screenRecordedMediaURL;
-                    camRecordedVideoRef.current.src = camRecordedMediaURL;
-                }
-
-                console.log(quitFlag);
-                if (quitFlag.current === true) { //녹화 종료 버튼이 눌렸을 때만 서버에 데이터 전송
-                    const formData = new FormData();
-                    const nowDate = new Date();
-
-                    formData.append( //화면 녹화 추가
-                        'screen',
-                        screenBlob,
-                        `screen_userID_${nowDate.getFullYear()}.${nowDate.getMonth()+1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
-
-                    );
-
-                    formData.append( //웹캠 녹화 추가
-                        'cam',
-                        camBlob,
-                        `cam_userID_${nowDate.getFullYear()}.${nowDate.getMonth() + 1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
-                    );
-                    console.log(formData);
-                    
-                    //영상 서버 전송
-                    fetch("http://localhost:3001/ffmpeg/", {
-                        method: "POST",
-                        body: formData,
-                    })
-                        .then((response) => {
-                            console.log("영상 전송 완료", response); // 서버 응답 처리
-                        })
-                        .catch((error) => {
-                            console.error("영상 전송 실패:", error); // 서버 응답 처리
-                        });
-                }
-                screenMediaRecorderRef.current = null;
-                console.log(screenMediaRecorderRef.current);
-                camMediaRecorderRef.current = null;
-                console.log(camMediaRecorderRef.current);
-            }
-        };
-        console.log("Recording Start!");
-        screenMediaRecorderRef.current.start();
-        camMediaRecorderRef.current.start();
-        setIsPlaying(true);
-    };
-
-    const handleStopRecording = () => {
-        if (screenMediaRecorderRef.current) {
-            console.log("camMediaRecorderRef stop");
-            camMediaRecorderRef.current.stop();
-            console.log("screenMediaRecorderRef stop");
-            screenMediaRecorderRef.current.stop();
-            setIsPlaying(false);
-        }
-    };
-
-    const handleDownload = () => {
-        if (screenRecordedChunksRef.current.length > 0) {
-            const blob = new Blob(screenRecordedChunksRef.current, { type: "video/webm;" });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = "video.webm";
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-    };
-
     return (
         <div className="practice-container">
             <div className="practice-top">
                 <div>
-                    <Timer />
+                    <Timer time={{ minutes, seconds }} />
                 </div>
-                <button onClick={handleStopRecording}>
+                <button onClick={stopPractice}>
                     <FaStop /> 정지
                 </button>
                 <p>
@@ -224,19 +121,19 @@ const PracticeStart = () => {
                 </div>
                 <div className="practice-right">
                     <video ref={videoOutputRef} className="live-camera" muted></video>
-                    {isPlaying ? (
+                    {playing ? (
                         <p className="practice-title-save">{inputValue}</p>
                     ) : (
                         <input type="text" className="practice-title" placeholder="발표 제목을 입력해주세요" value={inputValue} onChange={handleInputChange} />
                     )}
 
                     <br />
-                    {isPlaying ? (
+                    {playing ? (
 
                         <Button variant="danger" onClick={quitPractice} className="start-stop-button">발표 종료</Button>
 
                     ) : (
-                        <Button onClick={handleStartRecording} className="start-stop-button">발표 시작</Button>
+                        <Button onClick={startPractice} className="start-stop-button">발표 시작</Button>
                     )}
                 </div>
             </div>
@@ -248,7 +145,7 @@ const PracticeStart = () => {
                     <video ref={camMediaRecorderRef} controls className="result-video"></video>
                     <div>
                         <Button onClick={goToDetailPage}>상세보기</Button>
-                        <Button onClick={handleDownload}>저장하기</Button>
+                        <Button>저장하기</Button>
                     </div>
                 </div>
                 <button onClick={closeModal} className="modal-close">닫기</button>
