@@ -11,10 +11,14 @@ import Timer from "../component/Timer";
 
 const PracticeStart = () => {
     const videoOutputRef = useRef(null);
-    const recordedVideoRef = useRef(null);
-    const mediaStreamRef = useRef(null);
-    const mediaRecorderRef = useRef(null);
-    const recordedChunksRef = useRef([]);
+    const screenRecordedVideoRef = useRef(null);
+    const camRecordedVideoRef = useRef(null);
+    const screenMediaStreamRef = useRef(null);
+    const camMediaStreamRef = useRef(null);
+    const screenMediaRecorderRef = useRef(null);
+    const camMediaRecorderRef = useRef(null);
+    const screenRecordedChunksRef = useRef([]);
+    const camRecordedChunksRef = useRef([]);
     const [isPlaying, setIsPlaying] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -67,14 +71,22 @@ const PracticeStart = () => {
         openModal();
     }
 
+    //영상 녹화에 필요한 권한 요청하기
     useEffect(() => {
+        // 유저의 화면 공유 요청
+        navigator.mediaDevices
+            .getDisplayMedia({video:true})
+            .then(function(newMediaStream){
+                screenMediaStreamRef.current = newMediaStream;
+            })
+
         // 유저의 카메라로 부터 입력을 사용할 수 있도록 요청
         navigator.mediaDevices
             .getUserMedia({ video: true, audio: true })
             .then(function (newMediaStream) {
-                mediaStreamRef.current = newMediaStream;
+                camMediaStreamRef.current = newMediaStream;
                 // 카메라의 입력을 실시간으로 비디오 태그에서 확인
-                videoOutputRef.current.srcObject = mediaStreamRef.current;
+                videoOutputRef.current.srcObject = camMediaStreamRef.current;
                 videoOutputRef.current.onloadedmetadata = function (e) {
                     videoOutputRef.current.play();
                 };
@@ -82,41 +94,67 @@ const PracticeStart = () => {
     }, []);
 
     const handleStartRecording = () => {
-        recordedChunksRef.current = []; //녹화 시작 전 데이터 저장할 배열 초기화
+        //녹화 시작 전 데이터 저장할 배열 초기화
+        screenRecordedChunksRef.current = [];
+        camRecordedChunksRef.current = [];
         quitFlag.current = false;
-        mediaRecorderRef.current = new MediaRecorder(mediaStreamRef.current, {
+
+        screenMediaRecorderRef.current = new MediaRecorder(screenMediaStreamRef.current, {
+            mimetype: "video/webm",
+        });
+        camMediaRecorderRef.current = new MediaRecorder(camMediaStreamRef.current, {
             mimetype: "video/webm",
         });
 
-        mediaRecorderRef.current.ondataavailable = function (event) {
+        screenMediaRecorderRef.current.ondataavailable = function (event) {
             if (event.data && event.data.size > 0) {
                 console.log("ondataavailable");
-                recordedChunksRef.current.push(event.data);
-                console.log("recordedChuncksRdf: ", recordedChunksRef);
+                screenRecordedChunksRef.current.push(event.data);
+                console.log("screenMediaRecorderRef: ", screenRecordedChunksRef);
+            }
+        };
+        camMediaRecorderRef.current.ondataavailable = function (event) {
+            if (event.data && event.data.size > 0) {
+                console.log("ondataavailable");
+                camRecordedChunksRef.current.push(event.data);
+                console.log("camMediaRecorderRef: ", camRecordedChunksRef);
             }
         };
 
-        mediaRecorderRef.current.onstop = function () {
-            if (recordedChunksRef.current.length > 0) {
-                const blob = new Blob(recordedChunksRef.current, { type: "video/webm" });
-                console.log("mediaRecorderRef.stop blob: ", blob);
-                const recordedMediaURL = URL.createObjectURL(blob);
-                if (recordedVideoRef.current) { //아무 값도 없을 때 참조 금지
-                    recordedVideoRef.current.src = recordedMediaURL;
+        screenMediaRecorderRef.current.onstop = function () {
+            if (screenRecordedChunksRef.current.length > 0) {
+                const screenBlob = new Blob(screenRecordedChunksRef.current, { type: "video/webm" });
+                console.log("screenMediaRecorderRef.stop blob: ", screenBlob);
+                const camBlob = new Blob(camRecordedChunksRef.current, { type: "video/webm" });
+                console.log("camRecordedChunksRef.stop blob: ", camBlob);
+                const screenRecordedMediaURL = URL.createObjectURL(screenBlob);
+                const camRecordedMediaURL = URL.createObjectURL(camBlob);
+                if (screenRecordedVideoRef.current && camRecordedVideoRef.current) { //아무 값도 없을 때 참조 금지
+                    screenRecordedVideoRef.current.src = screenRecordedMediaURL;
+                    camRecordedVideoRef.current.src = camRecordedMediaURL;
                 }
 
                 console.log(quitFlag);
                 if (quitFlag.current === true) { //녹화 종료 버튼이 눌렸을 때만 서버에 데이터 전송
                     const formData = new FormData();
                     const nowDate = new Date();
-                    formData.append(
-                        'video',
-                        blob,
-                        `userID_${nowDate.getFullYear()}.${nowDate.getMonth() + 1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
-                    );
-                    console.log("Post Form-Data : ", formData);
 
-                    fetch("http://localhost:3001/s3/", {
+                    formData.append( //화면 녹화 추가
+                        'screen',
+                        screenBlob,
+                        `screen_userID_${nowDate.getFullYear()}.${nowDate.getMonth()+1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
+
+                    );
+
+                    formData.append( //웹캠 녹화 추가
+                        'cam',
+                        camBlob,
+                        `cam_userID_${nowDate.getFullYear()}.${nowDate.getMonth() + 1}.${nowDate.getDate()}_${nowDate.getHours()}:${nowDate.getMinutes()}.webm`
+                    );
+                    console.log(formData);
+                    
+                    //영상 서버 전송
+                    fetch("http://localhost:3001/ffmpeg/", {
                         method: "POST",
                         body: formData,
                     })
@@ -127,25 +165,31 @@ const PracticeStart = () => {
                             console.error("영상 전송 실패:", error); // 서버 응답 처리
                         });
                 }
-                mediaRecorderRef.current = null;
-                console.log(mediaRecorderRef.current);
+                screenMediaRecorderRef.current = null;
+                console.log(screenMediaRecorderRef.current);
+                camMediaRecorderRef.current = null;
+                console.log(camMediaRecorderRef.current);
             }
         };
         console.log("Recording Start!");
-        mediaRecorderRef.current.start();
+        screenMediaRecorderRef.current.start();
+        camMediaRecorderRef.current.start();
         setIsPlaying(true);
     };
 
     const handleStopRecording = () => {
-        if (mediaRecorderRef.current) {
-            mediaRecorderRef.current.stop();
+        if (screenMediaRecorderRef.current) {
+            console.log("camMediaRecorderRef stop");
+            camMediaRecorderRef.current.stop();
+            console.log("screenMediaRecorderRef stop");
+            screenMediaRecorderRef.current.stop();
             setIsPlaying(false);
         }
     };
 
     const handleDownload = () => {
-        if (recordedChunksRef.current.length > 0) {
-            const blob = new Blob(recordedChunksRef.current, { type: "video/webm;" });
+        if (screenRecordedChunksRef.current.length > 0) {
+            const blob = new Blob(screenRecordedChunksRef.current, { type: "video/webm;" });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
@@ -201,7 +245,7 @@ const PracticeStart = () => {
                 <div className="modal-center">
                     <img src={logo} className="app-logo" alt="logo" width={200} />
                     <h2>{inputValue}</h2>
-                    <video ref={recordedVideoRef} controls className="result-video"></video>
+                    <video ref={camMediaRecorderRef} controls className="result-video"></video>
                     <div>
                         <Button onClick={goToDetailPage}>상세보기</Button>
                         <Button onClick={handleDownload}>저장하기</Button>
