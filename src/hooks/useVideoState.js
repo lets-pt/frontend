@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
@@ -15,6 +15,7 @@ const useVideoState = () => {
   const screenRecordedChunksRef = useRef([]);
   const camRecordedChunksRef = useRef([]);
   const quitFlag = useRef(null); //녹화 종료 버튼 클릭 여부 확인
+
 
   const startRecording = () => {
     dispatch({ type: "PLAY" });

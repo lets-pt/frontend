@@ -1,10 +1,12 @@
 let initialState = {
   isPlaying: false,
-  modalIsOpen: false,
+  resultModal: false,
   inputValue: '',
   isRunning: false,
   minutes: 0,
   seconds: 0,
+  practiceTitle: '',
+  practice: true,
 };
 
 function reducer(state = initialState, action) {
@@ -14,9 +16,9 @@ function reducer(state = initialState, action) {
     case "STOP":
       return { ...state, isPlaying: true };
     case "MODALOPEN":
-      return { ...state, modalIsOpen: true };
+      return { ...state, resultModal: true };
     case "MODALCLOSE":
-      return { ...state, modalIsOpen: false };
+      return { ...state, resultModal: false };
     case "TIMERSTART":
       return { ...state, isRunning: true, minutes: 0, seconds: 0 };
     case "TIMERSTOP":
@@ -27,6 +29,14 @@ function reducer(state = initialState, action) {
         seconds: state.seconds === 59 ? 0 : state.seconds + 1,
         minutes: state.seconds === 59 ? state.minutes + 1 : state.minutes,
       };
+    case "PRACTICETITLE":
+      return {
+        ...state, practiceTitle: action.payload
+      };
+    case "CHANGETOREAL":
+      return { ...state, practice: false }
+    case "CHANGETOPRACTICE":
+      return { ...state, practice: true }
 
     default:
       return { ...state };
