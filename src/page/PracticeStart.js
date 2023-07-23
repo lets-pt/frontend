@@ -10,8 +10,10 @@ import Timer from "../component/Timer";
 import useVideoState from "../hooks/useVideoState";
 import useTimerState from '../hooks/useTimerState';
 
+const PdfUploadMemoized = React.memo(PdfUpload);
+
 const PracticeStart = () => {
-    const { startRecording, stopRecording, downloadVideo, quitFlag, screenMediaStreamRef, camMediaStreamRef, videoOutputRef, camMediaRecorderRef, playing, formData } = useVideoState();
+    const { startRecording, stopRecording, quitFlag, screenMediaStreamRef, camMediaStreamRef, videoOutputRef, camMediaRecorderRef, playing, formData } = useVideoState();
     const { startTimer, stopTimer, minutes, seconds } = useTimerState();
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -116,7 +118,7 @@ const PracticeStart = () => {
             </div>
             <div className="camera-pdf-container">
                 <div className="practice-left">
-                    <PdfUpload />
+                    <PdfUploadMemoized />
                     <textarea className="script-input" placeholder="스크립트 작성"></textarea>
                 </div>
                 <div className="practice-right">
