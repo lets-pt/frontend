@@ -11,14 +11,12 @@ const useTimerState = () => {
   const startTimer = () => {
     dispatch({ type: "TIMERSTART" });
   };
-
   const stopTimer = () => {
     dispatch({ type: "TIMERSTOP" });
   };
 
   useEffect(() => {
     if (isRunning) {
-      console.log('useffect');
       intervalRef.current = setInterval(() => {
         dispatch({ type: "TIMERTICK" });
       }, 1000);
